@@ -1,19 +1,19 @@
 package world;
 
 import java.awt.Graphics;
-import geometry2d.Point2D;
+import geometry2d.Triangle2D;
 
 public class World {
-	
-	private Point2D[] point2Ds;
-	
-	public World(Point2D[] point2Ds) {
-		this.point2Ds = point2Ds;
+
+	private Triangle2D[] triangles;
+
+	public World(Triangle2D[] triangles) {
+		this.triangles = triangles;
 	}
-	
+
 	public void paint(Graphics g) {
-		//Paint points
-		for (Point2D i : point2Ds) {
+		// Paint triangles
+		for (Triangle2D i : triangles) {
 			i.paint(g);
 		}
 	}

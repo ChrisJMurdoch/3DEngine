@@ -14,12 +14,12 @@ public class Display extends JPanel {
 	private static final int HDHEIGHT = 1040;
 
 	// Fields
-	private boolean rendered;
 	public int fps;
+	private boolean rendered;
 
 	// Objects
 	private final World world;
-	private JFrame frame;
+	public JFrame frame;
 
 	public Display(World world) {
 
@@ -27,7 +27,7 @@ public class Display extends JPanel {
 
 		frame = new JFrame();
 		frame.setUndecorated(true);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setBounds(0, 0, HDWIDTH, HDHEIGHT);
 		frame.setLayout(null);
