@@ -10,8 +10,8 @@ import world.World;
 public class Display extends JPanel {
 
 	// Constants
-	private static final int HDWIDTH = 1920;
-	private static final int HDHEIGHT = 1040;
+	public static final int HDWIDTH = 1920;
+	public static final int HDHEIGHT = 1040;
 
 	// Fields
 	public int fps;

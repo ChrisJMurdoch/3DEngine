@@ -1,9 +1,8 @@
 package engine;
 
 import java.awt.Color;
-
-import geometry2d.Point2D;
-import geometry2d.Triangle2D;
+import geometry3d.Point3D;
+import geometry3d.Triangle3D;
 import graphics.Display;
 import inputs.KL;
 import inputs.MML;
@@ -13,13 +12,30 @@ public class Engine {
 
 	private World world;
 	private Display display;
-	private MML mouse;
 	private KL keyboard;
+	private MML mouse;
 
 	private Engine() {
-		Point2D[] points1 = { new Point2D(10, 110), new Point2D(100, 110), new Point2D(100, 30) };
-		Point2D[] points2 = { new Point2D(300, 105), new Point2D(95, 200), new Point2D(70, 70) };
-		Triangle2D[] triangles = { new Triangle2D(points1, Color.RED), new Triangle2D(points2, Color.BLUE) };
+		
+		double[][] one = { { 10 }, { -10 }, { 120 } };
+		double[][] two = { { 10 }, { -10 }, { 140 } };
+		double[][] thr = { { 10 }, { 10 }, { 120 } };
+		double[][] fou = { { 10 }, { -10 }, { 140 } };
+		double[][] fiv = { { 10 }, { 10 }, { 120 } };
+		double[][] six = { { 10 }, { 10 }, { 140 } };
+		double[][] sev = { { -10 }, { -10 }, { 120 } };
+		double[][] eig = { { -10 }, { -10 }, { 140 } };
+		double[][] nin = { { -10 }, { 10 }, { 120 } };
+		double[][] ten = { { -10 }, { -10 }, { 140 } };
+		double[][] ele = { { -10 }, { 10 }, { 120 } };
+		double[][] twe = { { -10 }, { 10 }, { 140 } };
+
+		Point3D[] points1 = { new Point3D(one), new Point3D(two), new Point3D(thr), };
+		Point3D[] points2 = { new Point3D(fou), new Point3D(fiv), new Point3D(six), };
+		Point3D[] points3 = { new Point3D(sev), new Point3D(eig), new Point3D(nin), };
+		Point3D[] points4 = { new Point3D(ten), new Point3D(ele), new Point3D(twe), };
+		Triangle3D[] triangles = { new Triangle3D(points1, Color.RED), new Triangle3D(points2, Color.BLUE) , new Triangle3D(points3, Color.RED) , new Triangle3D(points4, Color.BLUE) };
+		
 		world = new World(triangles);
 		display = new Display(world);
 		display.addKeyListener(keyboard = new KL());
@@ -34,8 +50,8 @@ public class Engine {
 			// Physics
 			// Render
 			display.renderAndWait();
-			//try { Thread.sleep(16);
-			//} catch (InterruptedException e) { e.printStackTrace();}
+			// try { Thread.sleep(16);
+			// } catch (InterruptedException e) { e.printStackTrace();}
 
 			display.fps = (int) timer.getFPS();
 		}
