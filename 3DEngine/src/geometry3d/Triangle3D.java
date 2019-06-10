@@ -34,4 +34,25 @@ public class Triangle3D {
 		g.setColor(Color.WHITE);
 		g.drawPolygon(xPoints, yPoints, points.length);
 	}
+	
+	public void move(double[][] moveMatrix) {
+		for (Point3D i : points) {
+			i.move(moveMatrix);
+		}
+	}
+	public void rotateX(double angle, Point3D pivot) {
+		for (Point3D i : points) {
+			i.rotateX(angle, pivot);
+		}
+	}
+	public void rotateY(double angle, Point3D pivot) {
+		for (Point3D i : points) {
+			i.rotateY(angle, pivot);
+		}
+	}
+	public void rotateZ(double angle, Point3D pivot) {
+		for (Point3D i : points) {
+			i.rotateZ(angle, pivot);
+		}
+	}
 }

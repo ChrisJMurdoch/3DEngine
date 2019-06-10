@@ -11,6 +11,10 @@ public class KL implements KeyListener {
 	public boolean a = false;
 	public boolean s = false;
 	public boolean d = false;
+	public boolean up = false;
+	public boolean down = false;
+	public boolean right = false;
+	public boolean left = false;
 	public boolean esc = false;
 
 	@Override
@@ -34,6 +38,18 @@ public class KL implements KeyListener {
 		case KeyEvent.VK_D:
 			d = true;
 			break;
+		case KeyEvent.VK_UP:
+			up = true;
+			break;
+		case KeyEvent.VK_DOWN:
+			down = true;
+			break;
+		case KeyEvent.VK_RIGHT:
+			right = true;
+			break;
+		case KeyEvent.VK_LEFT:
+			left = true;
+			break;
 		case KeyEvent.VK_ESCAPE:
 			esc = true;
 			break;
@@ -56,6 +72,18 @@ public class KL implements KeyListener {
 			break;
 		case KeyEvent.VK_D:
 			d = false;
+			break;
+		case KeyEvent.VK_UP:
+			up = false;
+			break;
+		case KeyEvent.VK_DOWN:
+			down = false;
+			break;
+		case KeyEvent.VK_RIGHT:
+			right = false;
+			break;
+		case KeyEvent.VK_LEFT:
+			left = false;
 			break;
 		case KeyEvent.VK_ESCAPE:
 			esc = false;
