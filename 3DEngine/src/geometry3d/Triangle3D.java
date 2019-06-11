@@ -2,10 +2,11 @@ package geometry3d;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import engine.VectorMath;
 
 public class Triangle3D {
 
-	private Point3D[] points = new Point3D[3];
+	public Point3D[] points = new Point3D[3];
 	private Color colour;
 	
 	public Triangle3D(Point3D[] points, Color colour) {
@@ -33,6 +34,12 @@ public class Triangle3D {
 		g.fillPolygon(xPoints, yPoints, points.length);
 		g.setColor(Color.WHITE);
 		g.drawPolygon(xPoints, yPoints, points.length);
+	}
+	
+	public Point3D getCrossProduct() {
+		Point3D aVec = VectorMath.subtract(points[0], points[2]);
+		Point3D bVec = VectorMath.subtract(points[0], points[1]);
+		return VectorMath.crossProduct(aVec, bVec);
 	}
 	
 	public void move(double[][] moveMatrix) {

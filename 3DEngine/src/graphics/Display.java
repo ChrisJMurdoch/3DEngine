@@ -14,8 +14,9 @@ public class Display extends JPanel {
 	public static final int HDHEIGHT = 1040;
 
 	// Fields
-	public int fps;
+	public static String dataOut;//Screen SysOut for debugging
 	private boolean rendered;
+	public int fps;
 
 	// Objects
 	private final World world;
@@ -62,6 +63,7 @@ public class Display extends JPanel {
 		// Draw HUD
 		g.setColor(Color.WHITE);
 		g.drawString("FPS: " + fps, 10, 20);
+		g.drawString("DATA: " + dataOut, 10, 35);
 		// finish
 		rendered = true;
 	}

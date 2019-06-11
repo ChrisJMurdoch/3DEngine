@@ -2,8 +2,10 @@ package world;
 
 import java.awt.Graphics;
 
+import engine.VectorMath;
 import geometry3d.Point3D;
 import geometry3d.Triangle3D;
+import graphics.Display;
 
 public class World {
 
@@ -16,10 +18,15 @@ public class World {
 	public void paint(Graphics g) {
 		// Paint triangles
 		for (Triangle3D i : triangles) {
-			i.project().paint(g);
+			if (VectorMath.dotProduct(i.getCrossProduct(), i.points[0]) < 0) {
+				i.project().paint(g);
+			}
 		}
 	}
 	
+	public void move(double x, double y, double z) {
+		move(new double[][] { {x}, {y}, {z}} );
+	}
 	public void move(double[][] moveMatrix) {
 		for (Triangle3D i : triangles) {
 			i.move(moveMatrix);
