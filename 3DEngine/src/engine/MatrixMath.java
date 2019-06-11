@@ -10,7 +10,7 @@ public class MatrixMath {
 	public static double[][] perspective (double z) {
 		return new double[][] {
 			{ 1/z, 0, 0 },
-			{ 0, 1/z, 0 }
+			{ 0, 1/z, 0 },
 		};
 	}
 

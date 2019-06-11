@@ -32,6 +32,9 @@ public class Engine {
 		Point3D[] points11 = { new Point3D(-1,-1,14), new Point3D(1,-1,14), new Point3D(-1,-1,12), };
 		Point3D[] points12 = { new Point3D(1,-1,12), new Point3D(-1,-1,12), new Point3D(1,-1,14), };
 		
+		Point3D[] points13 = { new Point3D(2,1,11), new Point3D(-2,0,12), new Point3D(1,0,15), };
+		Point3D[] points14 = { new Point3D(2,1,11), new Point3D(1,0,15), new Point3D(-2,0,12), };
+		
 		Triangle3D[] triangles = {
 			new Triangle3D(points1, Color.ORANGE),
 			new Triangle3D(points2, Color.ORANGE),
@@ -46,6 +49,8 @@ public class Engine {
 			new Triangle3D(points11, Color.RED),
 			new Triangle3D(points12, Color.RED),
 				
+			new Triangle3D(points13, Color.BLACK),
+			new Triangle3D(points14, Color.BLACK),
 		};
 
 		world = new World(triangles);
@@ -96,7 +101,7 @@ public class Engine {
 	private class ScreenTimer {
 
 		private long lastTick;
-		private double[] fpsHistory = new double[100];
+		private double[] fpsHistory = new double[20];
 		private int fpsIndex = 0;
 
 		private ScreenTimer() {

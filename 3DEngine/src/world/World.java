@@ -1,11 +1,9 @@
 package world;
 
-import java.awt.Graphics;
-
 import engine.VectorMath;
 import geometry3d.Point3D;
 import geometry3d.Triangle3D;
-import graphics.Display;
+import graphics.ZBuffer;
 
 public class World {
 
@@ -15,11 +13,11 @@ public class World {
 		this.triangles = triangles;
 	}
 
-	public void paint(Graphics g) {
+	public void paint(ZBuffer buffer) {
 		// Paint triangles
 		for (Triangle3D i : triangles) {
 			if (VectorMath.dotProduct(i.getCrossProduct(), i.points[0]) < 0) {
-				i.project().paint(g);
+				buffer.drawTriangle(i);
 			}
 		}
 	}

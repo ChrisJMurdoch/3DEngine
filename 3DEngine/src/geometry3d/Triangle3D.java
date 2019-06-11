@@ -33,9 +33,9 @@ public class Triangle3D {
 		g.setColor(colour);
 		g.fillPolygon(xPoints, yPoints, points.length);
 		g.setColor(Color.WHITE);
-		g.drawPolygon(xPoints, yPoints, points.length);
+		//g.drawPolygon(xPoints, yPoints, points.length);
 	}
-	
+
 	public Point3D getCrossProduct() {
 		Point3D aVec = VectorMath.subtract(points[0], points[2]);
 		Point3D bVec = VectorMath.subtract(points[0], points[1]);

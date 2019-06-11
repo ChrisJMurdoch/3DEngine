@@ -19,8 +19,9 @@ public class Display extends JPanel {
 	public int fps;
 
 	// Objects
-	private final World world;
 	public JFrame frame;
+	private final World world;
+	private ZBuffer zBuffer;
 
 	public Display(World world) {
 
@@ -39,6 +40,8 @@ public class Display extends JPanel {
 		setFocusable(true);
 
 		frame.setVisible(true);
+		
+		zBuffer = new ZBuffer();
 	}
 
 	public void renderAndWait() {
@@ -58,8 +61,10 @@ public class Display extends JPanel {
 		// Draw background
 		g.setColor(Color.DARK_GRAY);
 		g.fillRect(0, 0, HDWIDTH, HDHEIGHT);
-		// Draw world
-		world.paint(g);
+		// Draw world using z buffer
+		zBuffer.createImage(HDWIDTH, HDHEIGHT);
+		world.paint(zBuffer);
+		zBuffer.drawBuffer(g);
 		// Draw HUD
 		g.setColor(Color.WHITE);
 		g.drawString("FPS: " + fps, 10, 20);

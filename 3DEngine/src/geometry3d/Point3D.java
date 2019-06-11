@@ -22,15 +22,15 @@ public class Point3D {
 	}
 
 	public Point3D project() {
-		return new Point3D(MatrixMath.multiply(matrix, MatrixMath.perspective(matrix[2][0]))).scale();
+		return new Point3D(MatrixMath.multiply(matrix, MatrixMath.perspective(matrix[2][0]))).scale(matrix[2][0]);
 	}
 
-	private Point3D scale() {
+	private Point3D scale(double zPreserve) {
 		int scale = Display.HDWIDTH;
 		int border = (Display.HDHEIGHT - scale) / 2;
 		int x = (int) (matrix[0][0] * scale) + scale/2;
 		int y = (int) -(matrix[1][0] * scale) + scale/2 + border;
-		return new Point3D(x, y, matrix[2][0]);
+		return new Point3D(x, y, zPreserve);
 	}
 
 	public double getX() {
