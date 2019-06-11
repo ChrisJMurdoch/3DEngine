@@ -3,6 +3,7 @@ package geometry3d;
 import java.awt.Color;
 import java.awt.Graphics;
 import engine.VectorMath;
+import graphics.Display;
 
 public class Triangle3D {
 
@@ -30,10 +31,25 @@ public class Triangle3D {
 			xPoints[i] = (int) points[i].matrix[0][0];
 			yPoints[i] = (int) points[i].matrix[1][0];
 		}
-		g.setColor(colour);
+		g.setColor(getShade());
 		g.fillPolygon(xPoints, yPoints, points.length);
 		g.setColor(Color.WHITE);
 		//g.drawPolygon(xPoints, yPoints, points.length);
+	}
+	
+	public Color getShade() {
+		Point3D normal = getCrossProduct();
+		double y = normal.getY()/VectorMath.magnitude(normal);
+		if (y < 0) {
+			y = -y;
+			y = Math.pow(y, 0.5);
+			y = -y;
+		} else {
+			y = Math.pow(y, 0.5);
+		}
+		double mult = (y+1)/2;
+		int shade = (int) (mult * 255);
+		return new Color(shade, shade, shade);
 	}
 
 	public Point3D getCrossProduct() {
