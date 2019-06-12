@@ -2,6 +2,7 @@ package engine;
 
 import java.awt.Color;
 import geometry3d.Point3D;
+import geometry3d.Shape3D;
 import geometry3d.Triangle3D;
 import graphics.Display;
 import inputs.KL;
@@ -15,7 +16,6 @@ public class Engine {
 	private KL keyboard;
 	private MML mouse;
 
-	private Point3D pivot = new Point3D(0,0,13);
 
 	private Engine() {
 		
@@ -52,8 +52,12 @@ public class Engine {
 			new Triangle3D(points13, Color.BLACK),
 			new Triangle3D(points14, Color.BLACK),
 		};
-
-		world = new World(triangles);
+		
+		Point3D p = new Point3D(0,0,13);
+	
+		Shape3D[] shapes = { new Shape3D(triangles, new Point3D(0,0,13)), new Shape3D(triangles, new Point3D(0,0,13)), new Shape3D(triangles, new Point3D(0,0,13)), new Shape3D(triangles, new Point3D(0,0,13)) };
+		
+		world = new World(shapes);
 		display = new Display(world);
 		display.addKeyListener(keyboard = new KL());
 	}
@@ -75,22 +79,23 @@ public class Engine {
 	}
 	
 	private void control(int delta) {
+		Shape3D shape = world.shapes[0];
 		if (keyboard.w)
-			world.move(0, (double)delta/100, 0);
+			shape.move(0, (double)delta/100, 0);
 		if (keyboard.s)
-			world.move(0, -(double)delta/100, 0);
+			shape.move(0, -(double)delta/100, 0);
 		if (keyboard.d)
-			world.move((double)delta/100, 0, 0);
+			shape.move((double)delta/100, 0, 0);
 		if (keyboard.a)
-			world.move(-(double)delta/100, 0, 0);
+			shape.move(-(double)delta/100, 0, 0);
 		if (keyboard.right)
-			world.rotateY((double) delta/1000, pivot);
+			shape.rotateY((double) delta/1000);
 		if (keyboard.left)
-			world.rotateY((double) -delta/1000, pivot);
+			shape.rotateY((double) -delta/1000);
 		if (keyboard.up)
-			world.rotateX((double) delta/1000, pivot);
+			shape.rotateX((double) delta/1000);
 		if (keyboard.down)
-			world.rotateX((double) -delta/1000, pivot);
+			shape.rotateX((double) -delta/1000);
 	}
 
 	public static void main(String[] args) {
@@ -101,7 +106,7 @@ public class Engine {
 	private class ScreenTimer {
 
 		private long lastTick;
-		private double[] fpsHistory = new double[20];
+		private double[] fpsHistory = new double[30];
 		private int fpsIndex = 0;
 
 		private ScreenTimer() {
@@ -112,7 +117,7 @@ public class Engine {
 			long saved = lastTick;
 			lastTick = System.currentTimeMillis();
 			long timeElapsed = lastTick - saved;
-			fpsHistory[fpsIndex++] = (int) (1000 / timeElapsed);
+			fpsHistory[fpsIndex++] = (int) (1000 / (double)timeElapsed);
 			fpsIndex = fpsIndex % fpsHistory.length;
 			return (int)timeElapsed;
 		}

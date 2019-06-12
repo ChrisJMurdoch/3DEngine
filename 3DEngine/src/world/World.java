@@ -1,24 +1,21 @@
 package world;
 
-import engine.VectorMath;
 import geometry3d.Point3D;
-import geometry3d.Triangle3D;
+import geometry3d.Shape3D;
 import graphics.ZBuffer;
 
 public class World {
 
-	private Triangle3D[] triangles;
+	public Shape3D[] shapes;
 
-	public World(Triangle3D[] triangles) {
-		this.triangles = triangles;
+	public World(Shape3D[] shapes) {
+		this.shapes = shapes;
 	}
 
 	public void paint(ZBuffer buffer) {
 		// Paint triangles
-		for (Triangle3D i : triangles) {
-			if (VectorMath.dotProduct(i.getCrossProduct(), i.points[0]) < 0) {
-				buffer.drawTriangle(i);
-			}
+		for (Shape3D i : shapes) {
+			i.paint(buffer);
 		}
 	}
 	
@@ -26,22 +23,22 @@ public class World {
 		move(new double[][] { {x}, {y}, {z}} );
 	}
 	public void move(double[][] moveMatrix) {
-		for (Triangle3D i : triangles) {
+		for (Shape3D i : shapes) {
 			i.move(moveMatrix);
 		}
 	}
 	public void rotateX(double angle, Point3D pivot) {
-		for (Triangle3D i : triangles) {
+		for (Shape3D i : shapes) {
 			i.rotateX(angle, pivot);
 		}
 	}
 	public void rotateY(double angle, Point3D pivot) {
-		for (Triangle3D i : triangles) {
+		for (Shape3D i : shapes) {
 			i.rotateY(angle, pivot);
 		}
 	}
 	public void rotateZ(double angle, Point3D pivot) {
-		for (Triangle3D i : triangles) {
+		for (Shape3D i : shapes) {
 			i.rotateZ(angle, pivot);
 		}
 	}

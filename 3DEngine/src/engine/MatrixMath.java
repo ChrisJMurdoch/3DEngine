@@ -7,7 +7,7 @@ public class MatrixMath {
 		{ 0, 1, 0 }
 	};
 
-	public static double[][] perspective (double z) {
+	public static double[][] perspective(double z) {
 		return new double[][] {
 			{ 1/z, 0, 0 },
 			{ 0, 1/z, 0 },
@@ -17,23 +17,23 @@ public class MatrixMath {
 	public static double[][] rotateX(double angle) {
 		return new double[][] {
 			{ 1, 0, 0 },
-			{ 0, (double) Math.cos(angle), (double) -Math.sin(angle) },
-			{ 0, (double) Math.sin(angle), (double) Math.cos(angle) }
+			{ 0, Math.cos(angle), -Math.sin(angle) },
+			{ 0, Math.sin(angle), Math.cos(angle) }
 		};
 	}
 	
 	public static double[][] rotateY(double angle) {
 		return new double[][] {
-			{ (double) Math.cos(angle), 0, (double) -Math.sin(angle) },
+			{ Math.cos(angle), 0, -Math.sin(angle) },
 			{ 0, 1, 0 },
-			{ (double) Math.sin(angle), 0, (double) Math.cos(angle)}
+			{ Math.sin(angle), 0, Math.cos(angle)}
 		};
 	}
 	
 	public static double[][] rotateZ(double angle) {
 		return new double[][] {
-			{ (double) Math.cos(angle), (double) -Math.sin(angle), 0},
-			{ (double) Math.sin(angle), (double) Math.cos(angle), 0},
+			{ Math.cos(angle), -Math.sin(angle), 0},
+			{ Math.sin(angle), Math.cos(angle), 0},
 			{ 0, 0, 1}
 		};
 	}

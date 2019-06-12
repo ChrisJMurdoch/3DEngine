@@ -16,9 +16,8 @@ public class Point3D {
 		matrix[1][0] = y;
 		matrix[2][0] = z;
 	}
-
 	public Point3D clone() {
-		return new Point3D(matrix);
+		return new Point3D(matrix[0][0], matrix[1][0], matrix[2][0]);
 	}
 
 	public Point3D project() {
