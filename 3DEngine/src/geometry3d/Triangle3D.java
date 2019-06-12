@@ -24,32 +24,35 @@ public class Triangle3D {
 	}
 	
 
-	public void paint(Graphics g) {
+	public void paint(Graphics g, int xOff, int yOff) {
 		int[] xPoints = new int[points.length];
 		int[] yPoints = new int[points.length];
 		for (int i=0; i<points.length; i++) {
-			xPoints[i] = (int) points[i].matrix[0][0];
-			yPoints[i] = (int) points[i].matrix[1][0];
+			xPoints[i] = (int) points[i].matrix[0][0] + xOff;
+			yPoints[i] = (int) points[i].matrix[1][0] + yOff;
 		}
-		g.setColor(getShade());
+		g.setColor(colour);
 		g.fillPolygon(xPoints, yPoints, points.length);
 		g.setColor(Color.WHITE);
 		//g.drawPolygon(xPoints, yPoints, points.length);
 	}
 	
-	public Color getShade() {
+	public void setShade() {
+		double sensitivity = 1;
+		int min = 75;
+		int max = 175;
 		Point3D normal = getCrossProduct();
 		double y = normal.getY()/VectorMath.magnitude(normal);
 		if (y < 0) {
 			y = -y;
-			y = Math.pow(y, 0.5);
+			y = Math.pow(y, sensitivity);
 			y = -y;
 		} else {
-			y = Math.pow(y, 0.5);
+			y = Math.pow(y, sensitivity);
 		}
 		double mult = (y+1)/2;
-		int shade = (int) (mult * 255);
-		return new Color(shade, shade, shade);
+		int shade = min + (int)(mult * (max-min));
+		colour = new Color(shade, shade, shade);
 	}
 
 	public Point3D getCrossProduct() {
