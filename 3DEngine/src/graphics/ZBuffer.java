@@ -14,6 +14,7 @@ public class ZBuffer {
 
 	private double[] zBuffer;
 	private BufferedImage backBuffer;
+	private BufferedImage secondBuffer;
 
 	public void createImage(int width, int height) {
 		zBuffer = new double[height * width];
@@ -24,6 +25,9 @@ public class ZBuffer {
 	}
 
 	public void drawTriangle(Triangle3D triangle3D) {
+		if (triangle3D.points[0].getZ() < 5 || triangle3D.points[1].getZ() < 5 || triangle3D.points[2].getZ() < 5) {
+			return;
+		}
 		// create triangle image
 		triangle3D.setShade();
 		Triangle3D triangle2D = triangle3D.project();
@@ -36,28 +40,30 @@ public class ZBuffer {
 		Polygon pol = new Polygon(xPoints, yPoints, 3);
 		Rectangle bounds = pol.getBounds();
 		try {
-			BufferedImage triangleImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
-			Graphics tGraphics = triangleImage.getGraphics();
+			secondBuffer = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+			Graphics tGraphics = secondBuffer.getGraphics();
 			triangle2D.paint(tGraphics, -bounds.x, -bounds.y);
 			// prepare
 			Point3D p = triangle2D.points[0];
 			Point3D v = triangle2D.getCrossProduct();
 			// draw onto backBuffer
-			int[] colours = ((DataBufferInt) triangleImage.getRaster().getDataBuffer()).getData();
+			int[] colours = ((DataBufferInt) secondBuffer.getRaster().getDataBuffer()).getData();
 			for (int i = 0; i < colours.length; i++) {
 				if (outOfBounds(i, backBuffer.getWidth(), backBuffer.getHeight(), bounds.width, bounds.x, bounds.y)) {
 					continue;
 				}
 				if (((colours[i] >> 24) & 0xFF) > 0) {
 					double z = VectorMath.planeIntersectZ(p, v, (i % bounds.width) + bounds.x, ((i - (i % bounds.width)) / bounds.width) + bounds.y);
-					int index = getIndex(triangleImage.getWidth(), backBuffer.getWidth(), i, bounds.x, bounds.y);
+					int index = getIndex(secondBuffer.getWidth(), backBuffer.getWidth(), i, bounds.x, bounds.y);
 					if (zBuffer[index] > z) {
 						zBuffer[index] = z;
 						backBuffer.setRGB((i % bounds.width) + bounds.x, ((i - (i % bounds.width)) / bounds.width) + bounds.y, colours[i]);
 					}
 				}
 			}
-		} catch (IllegalArgumentException e) {
+			secondBuffer = null;
+		} catch (Exception e) {
+			secondBuffer = null;
 			return;
 		}
 	}

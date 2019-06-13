@@ -9,17 +9,24 @@ public class Triangle3D {
 
 	public Point3D[] points = new Point3D[3];
 	private Color colour;
-	
+	private Color shade;
+
 	public Triangle3D(Point3D[] points, Color colour) {
 		this.points = points;
 		this.colour = colour;
+		this.shade = Color.BLACK;
+	}
+	public Triangle3D(Point3D[] points, Color colour, Color shade) {
+		this.points = points;
+		this.colour = colour;
+		this.shade = shade;
 	}
 	public Triangle3D clone() {
 		Point3D[] cloned = new Point3D[points.length];
 		for (int i=0; i<points.length; i++) {
 			cloned[i] = points[i].clone();
 		}
-		return new Triangle3D(cloned, colour);
+		return new Triangle3D(cloned, colour, shade);
 	}
 	
 	public Triangle3D project() {
@@ -27,7 +34,7 @@ public class Triangle3D {
 		for (int i=0; i<points.length; i++) {
 			points3d[i] = points[i].project();
 		}
-		return new Triangle3D(points3d, colour);
+		return new Triangle3D(points3d, colour, shade);
 	}
 	
 
@@ -38,7 +45,7 @@ public class Triangle3D {
 			xPoints[i] = (int) points[i].matrix[0][0] + xOff;
 			yPoints[i] = (int) points[i].matrix[1][0] + yOff;
 		}
-		g.setColor(colour);
+		g.setColor(shade);
 		g.fillPolygon(xPoints, yPoints, points.length);
 		g.setColor(Color.BLACK);
 		//g.drawPolygon(xPoints, yPoints, points.length);
@@ -46,20 +53,19 @@ public class Triangle3D {
 	
 	public void setShade() {
 		double sensitivity = 1;
-		int min = 75;
-		int max = 175;
 		Point3D normal = getCrossProduct();
 		double y = normal.getY()/VectorMath.magnitude(normal);
-		if (y < 0) {
-			y = -y;
-			y = Math.pow(y, 1/sensitivity);
-			y = -y;
+		double x = normal.getX()/VectorMath.magnitude(normal);
+		double f = (y*0.75) + (x*0.25);
+		if (f < 0) {
+			f = -f;
+			f = Math.pow(f, 1/sensitivity);
+			f = -f;
 		} else {
-			y = Math.pow(y, 1/sensitivity);
+			f = Math.pow(f, 1/sensitivity);
 		}
-		double mult = (y+1)/2;
-		int shade = min + (int)(mult * (max-min));
-		colour = new Color(shade, shade, shade);
+		double mult = (f+1)/2;
+		shade = new Color((int)(colour.getRed()*mult), (int)(colour.getGreen()*mult), (int)(colour.getBlue()*mult));
 	}
 
 	public Point3D getCrossProduct() {
