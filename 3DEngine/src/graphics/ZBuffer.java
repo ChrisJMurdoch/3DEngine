@@ -40,16 +40,9 @@ public class ZBuffer {
 			xPoints[i] = (int) triangle2D.points[i].getX();
 			yPoints[i] = (int) triangle2D.points[i].getY();
 		}
-		Polygon pol = new Polygon(xPoints, yPoints, 3);
-		Rectangle outer = pol.getBounds();
-		int bx = (outer.x > 0) ? outer.x : 0;
-		int by = (outer.y > 0) ? outer.y : 0;
-		int bw = (outer.width <= backBuffer.getWidth()) ? outer.width : backBuffer.getWidth();
-		int bh = (outer.height <= backBuffer.getHeight()) ? outer.height : backBuffer.getHeight();
+		Rectangle bounds = clipToScreen(new Polygon(xPoints, yPoints, 3).getBounds(), backBuffer);
 		
-		Rectangle bounds = new Rectangle(bx, by, bw, bh);
-		
-		// Validate polygon bounds
+		// Validate bounds
 		if (!validateImage(bounds, backBuffer)) {
 			return;
 		}
@@ -69,20 +62,18 @@ public class ZBuffer {
 		int[] colours = ((DataBufferInt) secondBuffer.getRaster().getDataBuffer()).getData();
 		
 		// All image pixels
-		int i = -1;
+		int i = 0;
 		for (int y = bounds.y; y < bounds.y+bounds.height; y++) {
-			for (int x = bounds.x; x < bounds.x+bounds.width; x++) {
-				
-				// Increment i
-				i++;
+			for (int x = bounds.x; x < bounds.x+bounds.width; x++, i++) {
 				
 				// Validate colour
-				if (!validateColour(colours[i])) {
+				if (((colours[i] >> 24) & 0xFF) == 0) {
 					continue;
 				}
 				
 				// Validate pixel bounds
 				if (!validatePixel(x, y)) {
+					System.out.println("x: " + x + ", y: " + y);
 					continue;
 				}
 				
@@ -120,9 +111,16 @@ public class ZBuffer {
 		return true;
 	}
 	
-	private boolean validateColour(int colour) {
-		//Alpha not zero
-		return ((colour >> 24) & 0xFF) != 0;
+	private Rectangle clipToScreen(Rectangle in, BufferedImage screen) {
+		// X
+		int x = (in.x < 0) ? x = 0 : in.x;
+		// Y
+		int y = (in.y < 0) ? y = 0 : in.y;
+		// Width
+		int w = (x+in.width >= backBuffer.getWidth()-1) ? backBuffer.getWidth()-1-x : in.width;
+		// Height
+		int h = (y+in.height >= backBuffer.getHeight()-1) ? backBuffer.getHeight()-1-y : in.height;
+		return new Rectangle(x, y, w, h);
 	}
 	
 	private boolean validatePixel(int x, int y) {

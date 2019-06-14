@@ -67,7 +67,7 @@ public class Engine {
 	private class ScreenTimer {
 
 		private long lastTick;
-		private double[] fpsHistory = new double[30];
+		private double[] fpsHistory = new double[10];
 		private int fpsIndex = 0;
 
 		private ScreenTimer() {
