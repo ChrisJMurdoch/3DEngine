@@ -14,7 +14,6 @@ public class ZBuffer {
 
 	private double[] zBuffer;
 	private BufferedImage backBuffer;
-	private BufferedImage secondBuffer;
 
 	public void createImage(int width, int height) {
 		zBuffer = new double[height * width];
@@ -25,12 +24,16 @@ public class ZBuffer {
 	}
 
 	public void drawTriangle(Triangle3D triangle3D) {
-		if (triangle3D.points[0].getZ() < 5 || triangle3D.points[1].getZ() < 5 || triangle3D.points[2].getZ() < 5) {
+		
+		// Project triangle
+		Triangle3D triangle2D = triangle3D.project();
+		
+		// Validate projected depth
+		if (!validateDepth(triangle2D)) {
 			return;
 		}
-		// create triangle image
-		triangle3D.setShade();
-		Triangle3D triangle2D = triangle3D.project();
+		
+		// Get bounds
 		int[] xPoints = new int[3];
 		int[] yPoints = new int[3];
 		for (int i = 0; i < triangle2D.points.length; i++) {
@@ -39,51 +42,86 @@ public class ZBuffer {
 		}
 		Polygon pol = new Polygon(xPoints, yPoints, 3);
 		Rectangle bounds = pol.getBounds();
-		try {
-			secondBuffer = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
-			Graphics tGraphics = secondBuffer.getGraphics();
-			triangle2D.paint(tGraphics, -bounds.x, -bounds.y);
-			// prepare
-			Point3D p = triangle2D.points[0];
-			Point3D v = triangle2D.getCrossProduct();
-			// draw onto backBuffer
-			int[] colours = ((DataBufferInt) secondBuffer.getRaster().getDataBuffer()).getData();
-			for (int i = 0; i < colours.length; i++) {
-				if (outOfBounds(i, backBuffer.getWidth(), backBuffer.getHeight(), bounds.width, bounds.x, bounds.y)) {
-					continue;
-				}
-				if (((colours[i] >> 24) & 0xFF) > 0) {
-					double z = VectorMath.planeIntersectZ(p, v, (i % bounds.width) + bounds.x, ((i - (i % bounds.width)) / bounds.width) + bounds.y);
-					int index = getIndex(secondBuffer.getWidth(), backBuffer.getWidth(), i, bounds.x, bounds.y);
-					if (zBuffer[index] > z) {
-						zBuffer[index] = z;
-						backBuffer.setRGB((i % bounds.width) + bounds.x, ((i - (i % bounds.width)) / bounds.width) + bounds.y, colours[i]);
-					}
-				}
-			}
-			secondBuffer = null;
-		} catch (Exception e) {
-			secondBuffer = null;
+		
+		// Validate polygon bounds
+		if (!validateImage(bounds, backBuffer)) {
 			return;
 		}
-	}
-	
-	private boolean outOfBounds(int index, int width, int height, int subWidth, int subX, int subY) {
-		if ((index%subWidth)+subX >= width)
-			return true;
-		if ((index%subWidth)+subX < 0)
-			return true;
-		if ((index - (index%subWidth))/subWidth + subY >= height)
-			return true;
-		if ((index - (index%subWidth))/subWidth + subY < 0)
-			return true;
-		return false;
+		
+		// Get lighting
+		triangle3D.setShade();
+		
+		// Get triangle image
+		BufferedImage secondBuffer = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+		triangle2D.paint(secondBuffer.getGraphics(), -bounds.x, -bounds.y);
+		
+		// Get triangle plane
+		Point3D p = triangle2D.points[0];
+		Point3D v = triangle2D.getCrossProduct();
+		
+		// Get image pixels
+		int[] colours = ((DataBufferInt) secondBuffer.getRaster().getDataBuffer()).getData();
+		
+		// All image pixels
+		for (int i = 0; i < colours.length; i++) {
+			
+			// Validate colour
+			if (!validateColour(colours[i])) {
+				continue;
+			}
+			
+			// Validate pixel bounds
+			int x = (i % bounds.width) + bounds.x;
+			int y = ((i - (i % bounds.width)) / bounds.width) + bounds.y;
+			if (!validatePixel(x, y)) {
+				continue;
+			}
+			
+			// Validate depth
+			double z = VectorMath.planeIntersectZ(p, v, x, y);
+			int index = x + y*backBuffer.getWidth();
+			if (!(zBuffer[index] > z)) {
+				continue;
+			}
+			
+			// Write to z-buffer and image
+			zBuffer[index] = z;
+			backBuffer.setRGB(x, y, colours[i]);
+		}
 	}
 
-	private int getIndex(int widthA, int widthB, int indexA, int offsetAx, int offsetAy) {
-		int x = indexA % widthA;
-		int y = (indexA - (indexA % widthA)) / widthA;
-		return (x + offsetAx) + ((y + offsetAy) * widthB);
+	private boolean validateDepth(Triangle3D triangle) {
+		// Triangle too close or behind
+		double closePlane = 5;
+		if (triangle.points[0].getZ() < closePlane || triangle.points[1].getZ() < closePlane || triangle.points[2].getZ() < closePlane)
+			return false;
+		return true;
+	}
+	
+	private boolean validateImage(Rectangle bounds, BufferedImage screen) {
+		// Image fully off screen
+		if (bounds.x > screen.getWidth() || (bounds.x+bounds.width) < 0 )
+			return false;
+		if (bounds.y > screen.getHeight() || (bounds.y+bounds.height) < 0 )
+			return false;
+		// Image too thin
+		if (bounds.width <= 0 || bounds.height <= 0)
+			return false;
+		return true;
+	}
+	
+	private boolean validateColour(int colour) {
+		//Alpha not zero
+		return ((colour >> 24) & 0xFF) != 0;
+	}
+	
+	private boolean validatePixel(int x, int y) {
+		// Pixel off screen
+		if (x >= backBuffer.getWidth() || x < 0)
+			return false;
+		if (y >= backBuffer.getHeight() || y < 0)
+			return false;
+		return true;
 	}
 
 	public void drawBuffer(Graphics g) {
