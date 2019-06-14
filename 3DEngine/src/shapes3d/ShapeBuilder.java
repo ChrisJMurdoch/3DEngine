@@ -88,7 +88,7 @@ public class ShapeBuilder {
 			ShapeBuilder.buildCube(0.5, -2, 23, 1, 1, 1, SECONDARY),
 			ShapeBuilder.buildCube(2.5, -2, 23, 1, 1, 1, SECONDARY),
 			
-			ShapeBuilder.buildCube(-5, -2, 23.5, 10, 6, 1, TERTIARY),
+			ShapeBuilder.buildCube(-7, -3, 23.5, 14, 7, 1, TERTIARY),
 			
 		};
 		

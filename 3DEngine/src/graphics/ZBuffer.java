@@ -41,7 +41,13 @@ public class ZBuffer {
 			yPoints[i] = (int) triangle2D.points[i].getY();
 		}
 		Polygon pol = new Polygon(xPoints, yPoints, 3);
-		Rectangle bounds = pol.getBounds();
+		Rectangle outer = pol.getBounds();
+		int bx = (outer.x > 0) ? outer.x : 0;
+		int by = (outer.y > 0) ? outer.y : 0;
+		int bw = (outer.width <= backBuffer.getWidth()) ? outer.width : backBuffer.getWidth();
+		int bh = (outer.height <= backBuffer.getHeight()) ? outer.height : backBuffer.getHeight();
+		
+		Rectangle bounds = new Rectangle(bx, by, bw, bh);
 		
 		// Validate polygon bounds
 		if (!validateImage(bounds, backBuffer)) {
