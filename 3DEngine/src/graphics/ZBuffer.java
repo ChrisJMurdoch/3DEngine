@@ -52,7 +52,7 @@ public class ZBuffer {
 		triangle3D.setShade();
 		
 		// Get triangle image
-		BufferedImage secondBuffer = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage secondBuffer = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_RGB);
 		triangle2D.paint(secondBuffer.getGraphics(), -bounds.x, -bounds.y);
 		
 		// Get triangle plane
@@ -63,30 +63,34 @@ public class ZBuffer {
 		int[] colours = ((DataBufferInt) secondBuffer.getRaster().getDataBuffer()).getData();
 		
 		// All image pixels
-		for (int i = 0; i < colours.length; i++) {
-			
-			// Validate colour
-			if (!validateColour(colours[i])) {
-				continue;
+		int i = -1;
+		for (int y = bounds.y; y < bounds.y+bounds.height; y++) {
+			for (int x = bounds.x; x < bounds.x+bounds.width; x++) {
+				
+				// Increment i
+				i++;
+				
+				// Validate colour
+				if (!validateColour(colours[i])) {
+					continue;
+				}
+				
+				// Validate pixel bounds
+				if (!validatePixel(x, y)) {
+					continue;
+				}
+				
+				// Validate depth
+				double z = VectorMath.planeIntersectZ(p, v, x, y);
+				int index = x + (y*backBuffer.getWidth());
+				if (!(zBuffer[index] > z)) {
+					continue;
+				}
+				
+				// Write to z-buffer and image
+				zBuffer[index] = z;
+				backBuffer.setRGB(x, y, colours[i]);
 			}
-			
-			// Validate pixel bounds
-			int x = (i % bounds.width) + bounds.x;
-			int y = ((i - (i % bounds.width)) / bounds.width) + bounds.y;
-			if (!validatePixel(x, y)) {
-				continue;
-			}
-			
-			// Validate depth
-			double z = VectorMath.planeIntersectZ(p, v, x, y);
-			int index = x + y*backBuffer.getWidth();
-			if (!(zBuffer[index] > z)) {
-				continue;
-			}
-			
-			// Write to z-buffer and image
-			zBuffer[index] = z;
-			backBuffer.setRGB(x, y, colours[i]);
 		}
 	}
 
