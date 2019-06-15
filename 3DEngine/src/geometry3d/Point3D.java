@@ -42,6 +42,9 @@ public class Point3D {
 		return matrix[2][0];
 	}
 	
+	public void move(double x, double y, double z) {
+		move(new double[][] {{x},{y},{z}});
+	}
 	public void move(double[][] moveMatrix) {
 		matrix[0][0] += moveMatrix[0][0];
 		matrix[1][0] += moveMatrix[1][0];

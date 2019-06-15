@@ -15,6 +15,13 @@ public class Shape3D {
 		}
 		this.centre = centre.clone();
 	}
+	public Shape3D clone() {
+		Triangle3D[] cloned = new Triangle3D[triangles.length];
+		for (int i=0; i<triangles.length; i++) {
+			cloned[i] = triangles[i].clone();
+		}
+		return new Shape3D(cloned, centre.clone());
+	}
 
 	public void paint(ZBuffer buffer) {
 		// Paint triangles

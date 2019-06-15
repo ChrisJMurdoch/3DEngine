@@ -39,14 +39,14 @@ public class ShapeBuilder {
 		
 		return new Shape3D(new Triangle3D[] { sbr, stl, nbr, ntl, ebf, etc, wbf, wtc, brc, blf, trc, tlf }, new Point3D(x+width/2, y+height/2, z+depth/2));
 	}
-	
-	public static Shape3D[] buildShapes() {
+
+	public static Shape3D[] buildShapes1() {
 		final Color PRIMARY = Color.LIGHT_GRAY;
 		final Color SECONDARY = Color.DARK_GRAY;
 		final Color TERTIARY = Color.CYAN;
 		
 		Shape3D[] shapes = {
-			ShapeBuilder.buildCube(-1, -1, 11, 2, 2, 2, PRIMARY),
+			ShapeBuilder.buildCube(-1, -1, 11.5, 2, 2, 2, PRIMARY),
 			
 			ShapeBuilder.buildCube(-3.5, -2, 9, 1, 1, 1, SECONDARY),
 			ShapeBuilder.buildCube(-1.5, -2, 9, 1, 1, 1, SECONDARY),
@@ -90,6 +90,21 @@ public class ShapeBuilder {
 			
 			ShapeBuilder.buildCube(-7, -3, 23.5, 14, 7, 1, TERTIARY),
 			
+		};
+		
+		return shapes;
+	}
+	
+	public static Shape3D[] buildShapes2() {
+		final Color PRIMARY = Color.LIGHT_GRAY;
+		final Color SECONDARY = Color.DARK_GRAY;
+		final Color TERTIARY = Color.CYAN;
+		
+		Shape3D[] shapes = {
+			ShapeBuilder.buildCube(-1, -1, 11.5, 2, 2, 2, PRIMARY),
+			
+			ShapeBuilder.buildCube(-2, -2, 10.5, 4, 0.6, 4, SECONDARY),
+			ShapeBuilder.buildCube(-2.5, -2.6, 10, 5, 0.6, 5, SECONDARY),
 		};
 		
 		return shapes;

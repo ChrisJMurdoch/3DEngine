@@ -1,5 +1,6 @@
 package world;
 
+import geometry3d.Camera;
 import geometry3d.Point3D;
 import geometry3d.Shape3D;
 import graphics.ZBuffer;
@@ -11,10 +12,21 @@ public class World {
 	public World(Shape3D[] shapes) {
 		this.shapes = shapes;
 	}
+	public World clone() {
+		Shape3D[] cloned = new Shape3D[shapes.length];
+		for (int i=0; i<shapes.length; i++ ) {
+			cloned[i] = shapes[i].clone();
+		}
+		return new World(cloned);
+	}
 
-	public void paint(ZBuffer buffer) {
+	public void paint(ZBuffer buffer, Camera camera) {
+		World clone = clone();
+		clone.move(camera.getX(), camera.getY(), camera.getZ());
+		clone.rotateY(camera.yaw, new Point3D(0,0,0));
+		clone.rotateX(camera.pitch, new Point3D(0,0,0));
 		// Paint triangles
-		for (Shape3D i : shapes) {
+		for (Shape3D i : clone.shapes) {
 			i.paint(buffer);
 		}
 	}

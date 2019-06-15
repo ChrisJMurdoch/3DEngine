@@ -29,6 +29,7 @@ public class MML implements MouseMotionListener {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		defX = toolkit.getScreenSize().width / 2;
 		defY = toolkit.getScreenSize().height / 2;
+		robot.mouseMove(defX, defY);
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -48,10 +49,6 @@ public class MML implements MouseMotionListener {
 	
 	private void regulate() {
 		float multiplier = 2f;
-		if (dy/(float)Display.HEIGHT*multiplier > 0.95)
-			dy = (int) (0.95f*(float)Display.HEIGHT/multiplier);
-		if (dy/(float)Display.HEIGHT*multiplier < -0.95)
-			dy = (int) (-0.95f*(float)Display.HEIGHT/multiplier);
 		xAngle = dx / (float)Display.WIDTH * multiplier;
 		yAngle = dy / (float)Display.HEIGHT * multiplier;
 	}

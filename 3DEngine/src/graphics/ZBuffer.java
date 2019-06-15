@@ -5,6 +5,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.awt.image.WritableRaster;
 
 import engine.VectorMath;
 import geometry3d.Point3D;
@@ -19,11 +20,15 @@ public class ZBuffer {
 		zBuffer = new double[height * width];
 		for (int i = 0; i < zBuffer.length; i++) {
 			zBuffer[i] = 10000;
+			//pixels[i] = 0;
 		}
 		backBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	}
 
 	public void drawTriangle(Triangle3D triangle3D) {
+		
+		// Get lighting
+		triangle3D.setShade();
 		
 		// Project triangle
 		Triangle3D triangle2D = triangle3D.project();
@@ -47,9 +52,6 @@ public class ZBuffer {
 			return;
 		}
 		
-		// Get lighting
-		triangle3D.setShade();
-		
 		// Get triangle image
 		BufferedImage secondBuffer = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_RGB);
 		triangle2D.paint(secondBuffer.getGraphics(), -bounds.x, -bounds.y);
@@ -61,26 +63,21 @@ public class ZBuffer {
 		// Get image pixels
 		int[] colours = ((DataBufferInt) secondBuffer.getRaster().getDataBuffer()).getData();
 		
+		// Depth calculation prep
+		double a = (p.getZ()*v.getZ())+(p.getY()*v.getY())+(p.getX()*v.getX());
 		// All image pixels
 		int i = 0;
 		for (int y = bounds.y; y < bounds.y+bounds.height; y++) {
 			for (int x = bounds.x; x < bounds.x+bounds.width; x++, i++) {
 				
 				// Validate colour
-				if (((colours[i] >> 24) & 0xFF) == 0) {
+				if (colours[i] == 0)
 					continue;
-				}
-				
-				// Validate pixel bounds
-				if (!validatePixel(x, y)) {
-					System.out.println("x: " + x + ", y: " + y);
-					continue;
-				}
 				
 				// Validate depth
-				double z = VectorMath.planeIntersectZ(p, v, x, y);
+				double z = (a-(v.getX()*x)-(v.getY()*y))/v.getZ();
 				int index = x + (y*backBuffer.getWidth());
-				if (!(zBuffer[index] > z)) {
+				if ((zBuffer[index] <= z)) {
 					continue;
 				}
 				
@@ -93,7 +90,7 @@ public class ZBuffer {
 
 	private boolean validateDepth(Triangle3D triangle) {
 		// Triangle too close or behind
-		double closePlane = 5;
+		double closePlane = 1;
 		if (triangle.points[0].getZ() < closePlane || triangle.points[1].getZ() < closePlane || triangle.points[2].getZ() < closePlane)
 			return false;
 		return true;
@@ -121,15 +118,6 @@ public class ZBuffer {
 		// Height
 		int h = (y+in.height >= backBuffer.getHeight()-1) ? backBuffer.getHeight()-1-y : in.height;
 		return new Rectangle(x, y, w, h);
-	}
-	
-	private boolean validatePixel(int x, int y) {
-		// Pixel off screen
-		if (x >= backBuffer.getWidth() || x < 0)
-			return false;
-		if (y >= backBuffer.getHeight() || y < 0)
-			return false;
-		return true;
 	}
 
 	public void drawBuffer(Graphics g) {

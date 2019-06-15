@@ -1,9 +1,16 @@
 package graphics;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import geometry3d.Camera;
 import world.World;
 
 @SuppressWarnings("serial")
@@ -19,13 +26,15 @@ public class Display extends JPanel {
 	public int fps;
 
 	// Objects
-	public JFrame frame;
+	public final JFrame frame;
 	private final World world;
-	private ZBuffer zBuffer;
+	private final Camera camera;
+	private final ZBuffer zBuffer;
 
-	public Display(World world) {
+	public Display(World world, Camera camera) {
 
 		this.world = world;
+		this.camera = camera;
 
 		frame = new JFrame();
 		frame.setUndecorated(true);
@@ -38,6 +47,10 @@ public class Display extends JPanel {
 		setLayout(null);
 		frame.add(this);
 		setFocusable(true);
+		
+		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank");
+		frame.getContentPane().setCursor(blankCursor);
 
 		frame.setVisible(true);
 		
@@ -63,7 +76,7 @@ public class Display extends JPanel {
 		g.fillRect(0, 0, HDWIDTH, HDHEIGHT);
 		// Draw world using z buffer
 		zBuffer.createImage(HDWIDTH, HDHEIGHT);
-		world.paint(zBuffer);
+		world.paint(zBuffer, camera);
 		zBuffer.drawBuffer(g);
 		// Draw HUD
 		g.setColor(Color.WHITE);

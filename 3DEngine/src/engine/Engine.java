@@ -1,5 +1,7 @@
 package engine;
 
+import geometry3d.Camera;
+import geometry3d.Point3D;
 import geometry3d.Shape3D;
 import graphics.Display;
 import inputs.KL;
@@ -10,15 +12,18 @@ import world.World;
 public class Engine {
 
 	private World world;
+	private Camera camera;
 	private Display display;
 	private KL keyboard;
 	private MML mouse;
 
 
 	private Engine() {
-		world = new World(ShapeBuilder.buildShapes());
-		display = new Display(world);
+		world = new World(ShapeBuilder.buildShapes1());
+		camera = new Camera(0,0,0);
+		display = new Display(world, camera);
 		display.addKeyListener(keyboard = new KL());
+		display.addMouseMotionListener(mouse = new MML());
 	}
 
 	private void run() {
@@ -40,23 +45,21 @@ public class Engine {
 	}
 	
 	private void control(int delta) {
-		Shape3D shape = world.shapes[0];
+		camera.pitch = -mouse.yAngle/1000;
+		camera.yaw = mouse.xAngle/1000;
+		double z = 0;
+		double x = 0;
 		if (keyboard.w)
-			world.move(0, 0, -(double)delta/100);
+			z =- (double)delta/100;
 		if (keyboard.s)
-			world.move(0, 0, (double)delta/100);
+			z =+ (double)delta/100;
 		if (keyboard.d)
-			world.move(-(double)delta/100, 0, 0);
+			x =- (double)delta/100;
 		if (keyboard.a)
-			world.move((double)delta/100, 0, 0);
-		//if (keyboard.right)
-			//shape.rotateY((double) delta/1000);
-		//if (keyboard.left)
-			//shape.rotateY((double) -delta/1000);
-		//if (keyboard.up)
-			//shape.rotateX((double) delta/1000);
-		//if (keyboard.down)
-			//shape.rotateX((double) -delta/1000);
+			x =+ (double)delta/100;
+		Point3D vector = new Point3D(x,0,z);
+		vector.rotateY(-camera.yaw, new Point3D(0,0,0));
+		camera.move(vector.getX(), vector.getY(), vector.getZ());
 	}
 
 	public static void main(String[] args) {
